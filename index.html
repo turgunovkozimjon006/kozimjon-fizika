@@ -246,10 +246,24 @@
 
 <script>
 /* ══════════════════════════════════════
+   GitHub Releases PDF linklari
+   Yangi yil qo'shganda shu yerga qo'shing:
+   yil: "https://github.com/.../releases/download/v1.0/FAYL.pdf"
+══════════════════════════════════════ */
+const PDF_URLS = {
+  2008: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2008_QS.pdf",
+  2009: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2008_QS.pdf",
+  2010: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2010_QS.pdf",
+  2011: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2011_QS.pdf",
+  2012: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2012_QS.pdf",
+  2013: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2013_QS.pdf",
+  2014: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2014_QS.pdf",
+};
+
+/* ══════════════════════════════════════
    IPhO DATA
-   done:true  → PDF yuklangan (ko'rish va yuklab olish faol)
-   done:false → hali yuklanmagan (tugmalar o'chirilgan)
-   pdf: fayl yo'li — siz o'zgartirishingiz mumkin
+   done:true  → PDF yuklangan
+   done:false → hali yuklanmagan
 ══════════════════════════════════════ */
 const DATA = [
   {y:2025,loc:"Franciya",done:false},
@@ -262,55 +276,68 @@ const DATA = [
   {y:2018,loc:"Portugaliya",done:false},
   {y:2017,loc:"Indoneziya",done:false},
   {y:2016,loc:"Shveytsariya",done:false},
-{y:2015,loc:"Hindiston",done:true},
-{y:2014,loc:"Qozog'iston",done:true},
-{y:2013,loc:"Daniya",done:true},
-{y:2012,loc:"Estoniya",done:true},
-{y:2011,loc:"Tailand",done:true},
-{y:2010,loc:"Xorvatiya",done:true},
-{y:2009,loc:"Meksika",done:true},
-{y:2008,loc:"Vyetnam",done:true},
-{y:2007,loc:"Eron",done:true},
-{y:2006,loc:"Singapur",done:true},
-{y:2005,loc:"Ispaniya",done:true},
-{y:2004,loc:"Janubiy Koreya",done:true},
-{y:2003,loc:"Tayvan",done:true},
-{y:2002,loc:"Indoneziya",done:true},
-{y:2001,loc:"Turkiya",done:true},
-{y:2000,loc:"Eron",done:true},
-{y:1999,loc:"Italiya",done:true},
-{y:1998,loc:"Islandiya",done:true},
-{y:1997,loc:"Kanada",done:true},
-{y:1996,loc:"Norvegiya",done:true},
-{y:1995,loc:"Avstraliya",done:true},
-{y:1994,loc:"Xitoy",done:true},
-{y:1993,loc:"AQSh",done:true},
-{y:1992,loc:"Finlandiya",done:true},
-{y:1991,loc:"Kuba",done:true},
-{y:1990,loc:"Niderlandiya",done:true},
-{y:1989,loc:"Polsha",done:true},
-{y:1988,loc:"Avstriya",done:true},
-{y:1987,loc:"Germaniya (GDR)",done:true},
-{y:1986,loc:"Buyuk Britaniya",done:true},
-{y:1985,loc:"Yugoslaviya",done:true},
-{y:1984,loc:"Shvetsiya",done:true},
-{y:1983,loc:"Ruminiya",done:true},
-{y:1982,loc:"Germaniya (FRG)",done:true},
-{y:1981,loc:"Bolgariya",done:true},
-{y:1979,loc:"Bolgariya",done:true},
-{y:1977,loc:"Chexoslovakiya",done:true},
-{y:1976,loc:"Vengriya",done:true},
-{y:1975,loc:"Germaniya (GDR)",done:true},
-{y:1974,loc:"SSSR",done:true},
-{y:1972,loc:"Ruminiya",done:true},
-{y:1971,loc:"Chexoslovakiya",done:true},
-{y:1970,loc:"SSSR",done:true},
-{y:1969,loc:"Chexoslovakiya",done:true},
-{y:1968,loc:"Vengriya",done:true},
-{y:1967,loc:"Polsha",done:true},
+  {y:2015,loc:"Hindiston",done:true},
+  {y:2014,loc:"Qozog'iston",done:true},
+  {y:2013,loc:"Daniya",done:true},
+  {y:2012,loc:"Estoniya",done:true},
+  {y:2011,loc:"Tailand",done:true},
+  {y:2010,loc:"Xorvatiya",done:true},
+  {y:2009,loc:"Meksika",done:true},
+  {y:2008,loc:"Vyetnam",done:true},
+  {y:2007,loc:"Eron",done:true},
+  {y:2006,loc:"Singapur",done:true},
+  {y:2005,loc:"Ispaniya",done:true},
+  {y:2004,loc:"Janubiy Koreya",done:true},
+  {y:2003,loc:"Tayvan",done:true},
+  {y:2002,loc:"Indoneziya",done:true},
+  {y:2001,loc:"Turkiya",done:true},
+  {y:2000,loc:"Eron",done:true},
+  {y:1999,loc:"Italiya",done:true},
+  {y:1998,loc:"Islandiya",done:true},
+  {y:1997,loc:"Kanada",done:true},
+  {y:1996,loc:"Norvegiya",done:true},
+  {y:1995,loc:"Avstraliya",done:true},
+  {y:1994,loc:"Xitoy",done:true},
+  {y:1993,loc:"AQSh",done:true},
+  {y:1992,loc:"Finlandiya",done:true},
+  {y:1991,loc:"Kuba",done:true},
+  {y:1990,loc:"Niderlandiya",done:true},
+  {y:1989,loc:"Polsha",done:true},
+  {y:1988,loc:"Avstriya",done:true},
+  {y:1987,loc:"Germaniya (GDR)",done:true},
+  {y:1986,loc:"Buyuk Britaniya",done:true},
+  {y:1985,loc:"Yugoslaviya",done:true},
+  {y:1984,loc:"Shvetsiya",done:true},
+  {y:1983,loc:"Ruminiya",done:true},
+  {y:1982,loc:"Germaniya (FRG)",done:true},
+  {y:1981,loc:"Bolgariya",done:true},
+  {y:1979,loc:"Bolgariya",done:true},
+  {y:1977,loc:"Chexoslovakiya",done:true},
+  {y:1976,loc:"Vengriya",done:true},
+  {y:1975,loc:"Germaniya (GDR)",done:true},
+  {y:1974,loc:"SSSR",done:true},
+  {y:1972,loc:"Ruminiya",done:true},
+  {y:1971,loc:"Chexoslovakiya",done:true},
+  {y:1970,loc:"SSSR",done:true},
+  {y:1969,loc:"Chexoslovakiya",done:true},
+  {y:1968,loc:"Vengriya",done:true},
+  {y:1967,loc:"Polsha",done:true},
 ];
 
-function pdfPath(y){ return `pdfs/ipho/${y}.pdf`; }
+/* PDF_URLS da bo'lsa release linkini, bo'lmasa papkadan oladi */
+function pdfPath(y){
+  return PDF_URLS[y] || `pdfs/ipho/${y}.pdf`;
+}
+
+/* Modal ochilganda viewer URL */
+function viewerUrl(pdf){
+  /* Release linki bo'lsa Google Docs orqali ko'rsatadi (barcha brauzerda ishlaydi) */
+  if(pdf.startsWith('http')){
+    return 'https://docs.google.com/viewer?url=' + encodeURIComponent(pdf) + '&embedded=true';
+  }
+  /* Lokal fayl bo'lsa to'g'ridan-to'g'ri */
+  return pdf;
+}
 
 const EYE_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
 const DL_SVG  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
@@ -320,7 +347,7 @@ function makeCard(d){
   const dis = d.done ? '' : ' btn-disabled';
   const viewBtn = `<button class="btn-view${dis}" ${d.done?`onclick="openModal(${d.y},'${d.loc}','${pdf}')"`:''}>
     ${EYE_SVG}Ko'rish</button>`;
-  const dlBtn = `<a class="btn-dl${dis}" href="${pdf}" download>
+  const dlBtn = `<a class="btn-dl${dis}" href="${pdf}" download target="_blank">
     ${DL_SVG}Yuklab olish</a>`;
   return `<div class="year-card fi">
     <div class="ynum"${d.done?'':' style="opacity:.38"'}>${d.y}</div>
@@ -348,7 +375,7 @@ function filterYears(range, btn){
 function openModal(year, loc, pdf){
   document.getElementById('modal-year').textContent = 'IPhO ' + year;
   document.getElementById('modal-loc').textContent  = loc;
-  document.getElementById('modal-iframe').src       = pdf;
+  document.getElementById('modal-iframe').src       = viewerUrl(pdf);
   document.getElementById('modal-dl-btn').href      = pdf;
   document.getElementById('modal-bg').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -360,10 +387,7 @@ function closeModal(){
   document.body.style.overflow = '';
 }
 
-/* ESC tugmasi bilan yopish */
 document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
-
-/* Orqa fonga bosish bilan yopish */
 document.getElementById('modal-bg').addEventListener('click', function(e){
   if(e.target === this) closeModal();
 });
