@@ -2,8 +2,40 @@
 <html lang="uz">
 <head>
   <meta charset="UTF-8">
- <meta name="google-site-verification" content="google715d71bc852646ae" />
-  <title>Kozimjon Turg'unov — IPhO Fizika</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kozimjon Turg'unov — IPhO Fizika Masalalari O'zbek Tilida</title>
+
+  <!-- ══ SEO ══ -->
+  <meta name="description" content="IPhO (Xalqaro Fizika Olimpiadasi) 1967–2025 yillar masala va yechimlari o'zbek tilida. Har yil uchun PDF — bepul yuklab olish.">
+  <meta name="keywords" content="IPhO, xalqaro fizika olimpiadasi, fizika masalalari, fizika yechimlari, o'zbek tilida, olimpiada fizika, IPhO uzbek, fizika olimpiadasi">
+  <meta name="author" content="Kozimjon Turg'unov">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://turgunovkozimjon006.github.io/kozimjon-fizika/">
+
+  <!-- ══ OPEN GRAPH (Telegram, WhatsApp, Facebook ulashganda chiroyli ko'rinadi) ══ -->
+  <meta property="og:title" content="IPhO Masalalar — O'zbek tilida | Kozimjon Turg'unov">
+  <meta property="og:description" content="1967–2025 yillar IPhO masala va yechimlari o'zbek tilida. Bepul PDF.">
+  <meta property="og:url" content="https://turgunovkozimjon006.github.io/kozimjon-fizika/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="uz_UZ">
+
+  <!-- ══ JSON-LD: Google uchun tuzilgan ma'lumot ══ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Kozimjon Turg'unov — IPhO Fizika",
+    "url": "https://turgunovkozimjon006.github.io/kozimjon-fizika/",
+    "description": "IPhO xalqaro fizika olimpiadasi masala va yechimlari o'zbek tilida, 1967–2025",
+    "inLanguage": "uz",
+    "author": {
+      "@type": "Person",
+      "name": "Kozimjon Turg'unov",
+      "email": "turgunovkozimjon006@gmail.com"
+    }
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -99,7 +131,11 @@
     .modal-close:hover{background:rgba(255,255,255,.14);color:var(--text)}
     .modal-body{flex:1;background:#111;overflow:hidden;position:relative}
     .modal-body iframe{width:100%;height:100%;border:none;display:block}
-
+    .modal-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.85rem;background:#111;z-index:10;transition:opacity .3s}
+    .modal-loading.hide{opacity:0;pointer-events:none}
+    .spinner{width:38px;height:38px;border:2px solid rgba(245,158,11,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .75s linear infinite}
+    .spinner-text{font-size:.8rem;color:var(--dim);letter-spacing:.06em}
+    @keyframes spin{to{transform:rotate(360deg)}}
     /* ── CONTACT ── */
     .contact-row{display:flex;gap:1rem;flex-wrap:wrap}
     .c-card{flex:1;min-width:190px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:1.25rem;text-decoration:none;transition:border-color .2s}
@@ -275,7 +311,11 @@
       </div>
     </div>
     <div class="modal-body">
-      <iframe id="modal-iframe" src="" title="PDF ko'rish"></iframe>
+      <div class="modal-loading" id="modal-loading">
+        <div class="spinner"></div>
+        <div class="spinner-text">PDF yuklanmoqda…</div>
+      </div>
+      <iframe id="modal-iframe" src="" title="PDF ko'rish" onload="document.getElementById('modal-loading').classList.add('hide')"></iframe>
     </div>
   </div>
 </div>
@@ -287,14 +327,13 @@
    yil: "https://github.com/.../releases/download/v1.0/FAYL.pdf"
 ══════════════════════════════════════ */
 const PDF_URLS = {
-  2008: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2006_QS.pdf",
   2008: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2008_QS.pdf",
-  2009: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2009_QS.pdf",
+  2009: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2008_QS.pdf",
   2010: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2010_QS.pdf",
   2011: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2011_QS.pdf",
   2012: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2012_QS.pdf",
   2013: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2013_QS.pdf",
-  2014: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2014_QS.1.pdf",
+  2014: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2014_QS.pdf",
 };
 
 /* ══════════════════════════════════════
@@ -366,13 +405,8 @@ function pdfPath(y){
   return PDF_URLS[y] || `pdfs/ipho/${y}.pdf`;
 }
 
-/* Modal ochilganda viewer URL */
+/* Brauzerning o'z PDF ko'ruvchisi — Google Docs'dan 3-5x tezroq */
 function viewerUrl(pdf){
-  /* Release linki bo'lsa Google Docs orqali ko'rsatadi (barcha brauzerda ishlaydi) */
-  if(pdf.startsWith('http')){
-    return 'https://docs.google.com/viewer?url=' + encodeURIComponent(pdf) + '&embedded=true';
-  }
-  /* Lokal fayl bo'lsa to'g'ridan-to'g'ri */
   return pdf;
 }
 
@@ -408,26 +442,13 @@ function filterYears(range, btn){
   document.querySelectorAll('.year-card.fi').forEach(el => obs.observe(el));
 }
 
-/* ── MOBILE MENU ── */
-function closeMobileMenu(){
-  document.getElementById('nav-mobile').classList.remove('open');
-  document.getElementById('nav-toggle').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-document.getElementById('nav-toggle').addEventListener('click', function(){
-  const isOpen = this.classList.toggle('open');
-  document.getElementById('nav-mobile').classList.toggle('open', isOpen);
-  document.body.style.overflow = isOpen ? 'hidden' : '';
-});
-
 /* ── MODAL ── */
 function openModal(year, loc, pdf){
-  /* Telefonda PDF ni yangi tabda ochadi (iframe telefonda ishlamaydi) */
   if(window.innerWidth <= 640){
     window.open(pdf, '_blank');
     return;
   }
+  document.getElementById('modal-loading').classList.remove('hide');
   document.getElementById('modal-year').textContent = 'IPhO ' + year;
   document.getElementById('modal-loc').textContent  = loc;
   document.getElementById('modal-iframe').src       = viewerUrl(pdf);
@@ -441,6 +462,19 @@ function closeModal(){
   document.getElementById('modal-iframe').src = '';
   document.body.style.overflow = '';
 }
+
+/* ── MOBILE MENU ── */
+function closeMobileMenu(){
+  document.getElementById('nav-mobile').classList.remove('open');
+  document.getElementById('nav-toggle').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('nav-toggle').addEventListener('click', function(){
+  const isOpen = this.classList.toggle('open');
+  document.getElementById('nav-mobile').classList.toggle('open', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+});
 
 document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
 document.getElementById('modal-bg').addEventListener('click', function(e){
