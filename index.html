@@ -313,7 +313,7 @@
     <div class="modal-body">
       <div class="modal-loading" id="modal-loading">
         <div class="spinner"></div>
-        <div class="spinner-text">PDF yuklanmoqda…</div>
+        <div class="spinner-text" id="spinner-text">PDF yuklanmoqda…</div>
       </div>
       <iframe id="modal-iframe" src="" title="PDF ko'rish" onload="document.getElementById('modal-loading').classList.add('hide')"></iframe>
     </div>
@@ -327,7 +327,6 @@
    yil: "https://github.com/.../releases/download/v1.0/FAYL.pdf"
 ══════════════════════════════════════ */
 const PDF_URLS = {
-  2006: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2006_QS.pdf",
   2008: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2008_QS.pdf",
   2009: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2009_QS.pdf",
   2010: "https://github.com/turgunovkozimjon006/kozimjon-fizika/releases/download/v1.0/IPHO_2010_QS.pdf",
@@ -406,9 +405,65 @@ function pdfPath(y){
   return PDF_URLS[y] || `pdfs/ipho/${y}.pdf`;
 }
 
-/* Brauzerning o'z PDF ko'ruvchisi — Google Docs'dan 3-5x tezroq */
-function viewerUrl(pdf){
-  return pdf;
+/* ── MODAL ── */
+function isMobile(){
+  const byAgent = /Android|iPhone|iPad|iPod|webOS|BlackBerry|Mobile/i.test(navigator.userAgent);
+  const byWidth = window.innerWidth <= 768;
+  return byAgent || byWidth;
+}
+
+/* Eski blob URL ni tozalash */
+let _currentBlob = null;
+function revokeBlobUrl(){
+  if(_currentBlob){ URL.revokeObjectURL(_currentBlob); _currentBlob = null; }
+}
+
+async function openModal(year, loc, pdf){
+  /* Telefon/planshetda yangi tabda ochadi */
+  if(isMobile()){
+    window.open(pdf, '_blank');
+    return;
+  }
+
+  /* Modal va spinner ko'rsatish */
+  revokeBlobUrl();
+  const iframe      = document.getElementById('modal-iframe');
+  const loading     = document.getElementById('modal-loading');
+  const spinnerText = document.getElementById('spinner-text');
+
+  iframe.src = '';
+  loading.classList.remove('hide');
+  spinnerText.textContent = 'PDF yuklanmoqda…';
+  document.getElementById('modal-year').textContent = 'IPhO ' + year;
+  document.getElementById('modal-loc').textContent  = loc;
+  document.getElementById('modal-dl-btn').href      = pdf;
+  document.getElementById('modal-bg').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  if(pdf.startsWith('http')){
+    /* Release URL → fetch orqali blob qilib ko'rsatadi (iframe blokini aylab o'tadi) */
+    try {
+      const res = await fetch(pdf);
+      if(!res.ok) throw new Error('fetch ' + res.status);
+      const blob = await res.blob();
+      _currentBlob = URL.createObjectURL(blob);
+      iframe.src = _currentBlob;
+    } catch(err){
+      /* Agar fetch ishlamasa — Google Docs zaxira sifatida */
+      spinnerText.textContent = 'Viewer yuklanmoqda…';
+      iframe.src = 'https://docs.google.com/viewer?url=' + encodeURIComponent(pdf) + '&embedded=true';
+    }
+  } else {
+    /* Lokal fayl — to'g'ridan-to'g'ri */
+    iframe.src = pdf;
+  }
+}
+
+function closeModal(){
+  document.getElementById('modal-bg').classList.remove('open');
+  document.getElementById('modal-iframe').src = '';
+  revokeBlobUrl();
+  document.body.style.overflow = '';
 }
 
 const EYE_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
@@ -441,36 +496,6 @@ function filterYears(range, btn){
   else if(range==='1967') list = DATA.filter(d => d.y < 1980);
   document.getElementById('years-grid').innerHTML = list.map(makeCard).join('');
   document.querySelectorAll('.year-card.fi').forEach(el => obs.observe(el));
-}
-
-/* ── MODAL ── */
-/* Telefon yoki planshet ekanligini aniqlash — ikki usul birga */
-function isMobile(){
-  const byAgent = /Android|iPhone|iPad|iPod|webOS|BlackBerry|Mobile/i.test(navigator.userAgent);
-  const byWidth = window.innerWidth <= 768;
-  return byAgent || byWidth;
-}
-
-function openModal(year, loc, pdf){
-  /* Telefon/planshetda yangi tabda ochadi */
-  if(isMobile()){
-    window.open(pdf, '_blank');
-    return;
-  }
-  /* Kompyutarda modal oynada ochadi */
-  document.getElementById('modal-loading').classList.remove('hide');
-  document.getElementById('modal-year').textContent = 'IPhO ' + year;
-  document.getElementById('modal-loc').textContent  = loc;
-  document.getElementById('modal-iframe').src       = viewerUrl(pdf);
-  document.getElementById('modal-dl-btn').href      = pdf;
-  document.getElementById('modal-bg').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeModal(){
-  document.getElementById('modal-bg').classList.remove('open');
-  document.getElementById('modal-iframe').src = '';
-  document.body.style.overflow = '';
 }
 
 /* ── MOBILE MENU ── */
